@@ -22,6 +22,16 @@ public class GameObject {
 		color = Color.WHITE;
 		collisionBox = new Rectangle(x,y,width,height);
 	}
+	
+	public GameObject(int x, int y, Color col) {
+		this.x = x;
+		this.y = y;
+		width = 100;
+		height = 100;
+		isAlive = true;
+		color = col;
+		collisionBox = new Rectangle(x,y,width,height);
+	}
 	public GameObject(int x, int y, int width, int height, Color color) {
 		this.x = x;
 		this.y = y;

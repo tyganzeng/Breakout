@@ -20,7 +20,9 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener{
 	int currentState;
 	
 	public GamePanel() {
+		currentState = MENU_STATE;
 		paddle = new Paddle(100,700);
+		manager = new ObjectManager(paddle);
 		timer = new Timer(1000 / 60, this);
 	}
 	
@@ -30,70 +32,67 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener{
 	
 	public void paintComponent(Graphics g) {
 		// g.fillRect(10,10,100,100);
-		/*if (currentState == MENU_STATE) {
+		if (currentState == MENU_STATE) {
 			drawMenuState(g);
 
-		} else if (currentState == GAME_STATE) {
+		} else if (currentState == GAME_STATE1) {
 			drawGameState(g);
 
 		} else if (currentState == END_STATE) {
 			drawEndState(g);
-		}*/
-		drawGameState(g);
+		}
 	}
 	
 	public void actionPerformed(ActionEvent e) {
-		/*if (currentState == MENU_STATE) {
+		if (currentState == MENU_STATE) {
 			updateMenuState();
 
-		} else if (currentState == GAME_STATE) {
+		} else if (currentState == GAME_STATE1) {
 			updateGameState();
 
 		} else if (currentState == END_STATE) {
 			updateEndState();
-		}*/
-		updateGameState();
+		}
 		repaint();
 
 	}
+	public void updateMenuState() {
+		
+	}
 	
+	public void updateEndState() {
+		
+	}
 	public void updateGameState() {
-		/*manager.update();
-		manager.manageEnemies();
-		manager.purgeObjects();
 		manager.checkCollision();
-		if(ship.isAlive == false) {
-			currentState = END_STATE;
-		}*/
-		paddle.update();
+		manager.update();
 	}
 	
 	public void drawMenuState(Graphics g) {
-		/*g.setColor(Color.BLUE);
+		g.setColor(Color.BLUE);
 		g.fillRect(0, 0, Breakout.width, Breakout.height);
 		g.setColor(Color.YELLOW);
-		g.setFont(titleFont);
+		//g.setFont(titleFont);
 		g.drawString("LEAGUE INVADERS", 40, 200);
-		g.setFont(normalFont);
+		//g.setFont(normalFont);
 		g.drawString("Press ENTER to start", 130, 350);
-		g.drawString("Press SPACE for instructions", 100,500);*/
+		g.drawString("Press SPACE for instructions", 100,500);
 		
 	}
 
 	public void drawGameState(Graphics g) {
-		/*g.setColor(Color.BLACK);
-		g.drawImage(GamePanel.spaceImg, 0, 0, LeagueInvaders.width, LeagueInvaders.height, null);
-		manager.draw(g);*/
-		paddle.draw(g);
+		//g.setColor(Color.BLACK);
+		//g.drawImage(GamePanel.spaceImg, 0, 0, Breakout.width, Breakout.height, null);
+		manager.draw(g);
 	}
 
 	public void drawEndState(Graphics g) {
-		/*g.setColor(Color.RED);
-		g.fillRect(0, 0, LeagueInvaders.width, LeagueInvaders.height);
+		g.setColor(Color.RED);
+		g.fillRect(0, 0, Breakout.width, Breakout.height);
 		g.setColor(Color.BLACK);
-		g.setFont(titleFont);
+		//g.setFont(titleFont);
 		g.drawString("GAME OVER", 60, 200);
-		g.drawString("" + manager.getScore(), 60, 400);*/
+		//g.drawString("" + manager.getScore(), 60, 400);
 	}
 	
 	@Override
@@ -108,6 +107,12 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener{
 		if(e.getKeyCode() == KeyEvent.VK_LEFT) {
 			paddle.x -= paddle.speed;
 		} 
+		else if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+			currentState++;
+			if(currentState == END_STATE) {
+				currentState = MENU_STATE;
+			}
+		}
 		else if(e.getKeyCode() == KeyEvent.VK_RIGHT) {
 			paddle.x += paddle.speed;
 		} 

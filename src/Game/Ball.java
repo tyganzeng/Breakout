@@ -1,12 +1,58 @@
 package Game;
 
 import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Rectangle;
 
 public class Ball extends GameObject{
-
-	public Ball(int x, int y, int width, int height, Color color) {
-		super(x, y, width, height, color);
+	
+	int hitX = x + width/2;
+	int hitY = y + height/2;
+	int speed;
+	double angle;
+	
+	public Ball(int x, int y) {
+		super(x, y);
+		width = 20;
+		height = 20;
+		color = Color.GREEN;
+		speed = 10;
+		angle = 50;
+		collisionBox = new Rectangle(x,y,width,height);
+	}
+	
+	public void update() {
+		collisionBox = new Rectangle(x,y,width,height);
+		x += speed * Math.sin(Math.toRadians(angle));
+		y -= speed * Math.cos(Math.toRadians(angle));
+		if(x > Breakout.width || x < 0) {
+			angle = -angle;
+		}
+		if(y < 0 || y > Breakout.height) {
+			angle = -angle + 180;
+		}
 		
 	}
 	
+	public void draw(Graphics g) {
+		g.setColor(color);
+		g.fillOval(x, y, width, height);
+		g.setColor(Color.BLACK);
+		g.fillOval(x, y, 5, 5);
+		g.fillOval(hitX, hitY, 5, 5);
+	}
+	
+	public void horizBounce() {
+		angle = -angle;
+	}
+	
+	public void vertBounce() {
+		angle = -angle + 180;
+	}
+	public void cornerBounce() {
+		angle = angle + 180;
+	}
+	public void paddleBounce(int padX, int padY) {
+		angle = Math.toDegrees(Math.atan((hitX - padX) / (padY - hitY)));
+	}
 }
