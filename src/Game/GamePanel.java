@@ -6,11 +6,14 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
-public class GamePanel extends JPanel implements ActionListener, KeyListener{
+public class GamePanel extends JPanel implements ActionListener, KeyListener, MouseMotionListener{
 	Timer timer;
 	Paddle paddle;
 	final int MENU_STATE = 0;
@@ -23,7 +26,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener{
 		currentState = MENU_STATE;
 		paddle = new Paddle(100,700);
 		manager = new ObjectManager(paddle);
-		timer = new Timer(1000 / 60, this);
+		timer = new Timer(1000 / 100, this);
 	}
 	
 	public void startGame() {
@@ -105,7 +108,13 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener{
 	public void keyPressed(KeyEvent e) {
 		// TODO Auto-generated method stub
 		if(e.getKeyCode() == KeyEvent.VK_LEFT) {
-			paddle.x -= paddle.speed;
+			//paddle.x -= paddle.speed;
+			paddle.isMoving = true;
+			paddle.direction = "LEFT";
+		} 
+		else if(e.getKeyCode() == KeyEvent.VK_RIGHT) {
+			paddle.isMoving = true;
+			paddle.direction = "RIGHT";
 		} 
 		else if (e.getKeyCode() == KeyEvent.VK_ENTER) {
 			currentState++;
@@ -113,16 +122,28 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener{
 				currentState = MENU_STATE;
 			}
 		}
-		else if(e.getKeyCode() == KeyEvent.VK_RIGHT) {
-			paddle.x += paddle.speed;
-		} 
+		
 	}
 
 	@Override
 	public void keyReleased(KeyEvent e) {
 		// TODO Auto-generated method stub
+		paddle.isMoving = false;
+	}
+
+	@Override
+	public void mouseDragged(MouseEvent e) {
+		// TODO Auto-generated method stub
 		
 	}
+
+	@Override
+	public void mouseMoved(MouseEvent e) {
+		// TODO Auto-generated method stub
+		paddle.x = e.getX();
+	}
+
+	
 
 	
 
