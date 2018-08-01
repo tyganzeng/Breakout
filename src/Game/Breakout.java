@@ -7,8 +7,8 @@ import javax.swing.JFrame;
 public class Breakout {
 	JFrame window;
 	GamePanel panel;
-	public final static int width = 800;
-	public final static int height = 800;
+	public final static int width = 650;
+	public final static int height = 900;
 	
 	public Breakout() {
 		window = new JFrame();

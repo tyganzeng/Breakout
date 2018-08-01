@@ -28,12 +28,13 @@ public class Powerup extends GameObject{
 	}
 	public void update() {
 		y += speed;
-		collisionBox = new Rectangle(x,y,width,height);
+		collisionBox = new Rectangle((int) x,(int) y,width,height);
 	}
 	
 	public void draw(Graphics g) {
 		g.setColor(color);
-		g.fillOval(x, y, width, height);
+		g.drawString("P", (int) x, (int) y);
+		//g.fillOval((int) x, (int) y, width, height);
 	}
 	
 	public void setColor() {
@@ -54,7 +55,12 @@ public class Powerup extends GameObject{
 			color = Color.PINK;
 		} else if (type == "BOUNCE") {
 			color = Color.DARK_GRAY;
-		} else {
+		} else if (type == "DIVIDE") {
+			color = Color.BLACK;
+		} else if (type == "EIGHT") {
+			color = Color.CYAN;
+		}
+		else {
 			color = Color.BLACK;
 		}
 	}

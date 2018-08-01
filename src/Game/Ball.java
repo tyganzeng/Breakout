@@ -6,40 +6,54 @@ import java.awt.Rectangle;
 
 public class Ball extends GameObject{
 	
-	int hitX = x + width/2;
-	int hitY = y + height/2;
-	int speed;
+	double hitX = x + width/2;
+	double hitY = y + height/2;
+	double speed;
 	double angle;
 	boolean canBounce;
-	
+	boolean isAlive;
 	public Ball(int x, int y) {
 		super(x, y);
 		width = 20;
 		height = 20;
 		color = Color.GREEN;
-		speed = 10;
+		speed = 5;
 		angle = 50;
 		canBounce = true;
+		isAlive = true;
 		collisionBox = new Rectangle(x,y,width,height);
 	}
 	
+	public Ball(int x, int y, double angle) {
+		this(x,y);
+		this.angle = angle;
+	}
+	
 	public void update() {
-		collisionBox = new Rectangle(x,y,width,height);
+		collisionBox = new Rectangle((int) x,(int) y,width,height);
 		x += speed * Math.sin(Math.toRadians(angle));
 		y -= speed * Math.cos(Math.toRadians(angle));
 		hitY = y + height/2;
 		hitX = x + width/2;
 		if(x > Breakout.width || x < 0) {
-			angle = -angle;
+			horizBounce();
 		}
-		if(y < 0 || y > Breakout.height) {
-			angle = -angle + 180;
+		if(y < 0) {
+			vertBounce();
 		}
-		if(angle == 0) {
-			angle += 10;
+		if( y > Breakout.height) {
+			isAlive = false;
+		}
+		if(angle > 180.0) {
+			angle = angle - 360.0;
+		}
+		if(angle < -180.0) {
+			angle = angle + 360.0;
+		}
+		if(angle >= 80.0 && angle <= 100.0) {
+			angle = 110.0;
 			System.out.println("0 angle");
 		}
-		
 	}
 	
 	public void draw(Graphics g) {
@@ -49,10 +63,7 @@ public class Ball extends GameObject{
 			color = Color.RED;
 		}
 		g.setColor(color);
-		g.fillOval(x, y, width, height);
-		g.setColor(Color.BLACK);
-		g.fillOval(x, y, 5, 5);
-		g.fillOval(hitX, hitY, 5, 5);
+		g.fillOval((int) x, (int) y, width, height);
 	}
 	
 	public void horizBounce() {

@@ -20,7 +20,7 @@ public class Paddle extends GameObject{
 	}
 
 	public void update() {
-		collisionBox = new Rectangle(x,y,width,height);
+		collisionBox = new Rectangle((int) x,(int) y,width,height);
 		if(isMoving) {
 			if(direction.equals("LEFT")) {
 				x -= speed;
@@ -31,9 +31,7 @@ public class Paddle extends GameObject{
 	}
 	public void draw(Graphics g) {
 		g.setColor(color);
-		g.fillRect(x, y, width, height);
-		g.setColor(Color.BLACK);
-		g.fillOval(x + width/2, y + 40, 5,5);
+		g.fillRect((int) x, (int) y, width, height);
 	}
 	
 }

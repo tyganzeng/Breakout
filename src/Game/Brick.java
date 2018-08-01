@@ -11,7 +11,7 @@ public class Brick extends GameObject{
 	public Brick(int x, int y, Color color) {
 		super(x, y, color);
 		width = 50;
-		height = 10;
+		height = 20;
 		type = "NONE";
 		collisionBox = new Rectangle(x,y,width,height);
 		// TODO Auto-generated constructor stub
@@ -24,7 +24,9 @@ public class Brick extends GameObject{
 	
 	public void draw(Graphics g) {
 		g.setColor(color);
-		g.fillRect(x, y, width, height);
+		g.fillRect((int) x, (int) y, width, height);
+		g.setColor(Color.BLACK);
+		g.drawRect((int)x, (int) y, width, height);
 	}
 
 }
