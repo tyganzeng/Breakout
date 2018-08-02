@@ -1,6 +1,7 @@
 package Game;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -13,9 +14,11 @@ import java.awt.event.MouseMotionListener;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
-public class GamePanel extends JPanel implements ActionListener, KeyListener, MouseMotionListener{
+public class GamePanel extends JPanel implements ActionListener, KeyListener, MouseMotionListener, MouseListener{
 	Timer timer;
 	Paddle paddle;
+	Font titleFont;
+	Font normalFont;
 	final int MENU_STATE = 0;
 	final int GAME_TITLE1 = 1;
 	final int GAME_STATE1 = 2;
@@ -28,13 +31,15 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener, Mo
 	ObjectManager manager;
 	int currentState;
 	int level;
-	
+	boolean gameStarted;
 	public GamePanel() {
 		currentState = MENU_STATE;
 		paddle = new Paddle(100,700);
 		level = 1;
+		titleFont = new Font("Arial", Font.PLAIN, 48);
+		normalFont = new Font("Lucida Sans", Font.PLAIN, 20);
 		manager = new ObjectManager(paddle,level);
-		timer = new Timer(1000 / 100, this);
+		timer = new Timer(1000 / 60, this);
 	}
 	
 	public void startGame() {
@@ -84,11 +89,16 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener, Mo
 	public void updateGameState() {
 		manager.checkCollision();
 		manager.removeBalls();
+		manager.removeText();
 		if(manager.checkGameOver()) {
 			currentState = GAME_OVER;
+			
 		}
 		if(manager.checkWin()) {
 			currentState++;
+			if(level == 3) {
+				currentState++;
+			}
 			level++;
 		}
 		manager.update();
@@ -96,23 +106,24 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener, Mo
 	}
 	
 	public void drawMenuState(Graphics g) {
-		g.setColor(Color.BLUE);
+		g.setColor(Color.LIGHT_GRAY);
 		g.fillRect(0, 0, Breakout.width, Breakout.height);
-		g.setColor(Color.YELLOW);
-		//g.setFont(titleFont);
-		g.drawString("LEAGUE INVADERS", 40, 200);
-		//g.setFont(normalFont);
+		g.setColor(Color.BLUE);
+		g.setFont(titleFont);
+		g.drawString("BREAKOUT", 200, 200);
+		g.setFont(normalFont);
 		g.drawString("Press ENTER to start", 130, 350);
-		g.drawString("Press SPACE for instructions", 100,500);
+		g.drawString("Mouse-controlled", 100,500);
 		
 	}
 	public void drawTitleState(Graphics g) {
-		g.setColor(Color.RED);
+		g.setColor(Color.BLUE);
 		g.fillRect(0, 0, Breakout.width, Breakout.height);
 		g.setColor(Color.BLACK);
-		//g.setFont(titleFont);
-		g.drawString("LEVEL: " + level, 60, 200);
-		//g.drawString("" + manager.getScore(), 60, 400);
+		g.setFont(titleFont);
+		g.drawString("LEVEL: " + level, 200, 200);
+		g.setFont(normalFont);
+		g.drawString("press enter to start", 200,400);
 	}
 	
 	public void drawGameState(Graphics g) {
@@ -125,17 +136,15 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener, Mo
 		g.setColor(Color.RED);
 		g.fillRect(0, 0, Breakout.width, Breakout.height);
 		g.setColor(Color.BLACK);
-		//g.setFont(titleFont);
-		g.drawString("GAME OVER", 60, 200);
-		//g.drawString("" + manager.getScore(), 60, 400);
+		g.setFont(titleFont);
+		g.drawString("GAME OVER", 200, 200);
 	}
 	public void drawGameWinState(Graphics g) {
 		g.setColor(Color.BLUE);
 		g.fillRect(0, 0, Breakout.width, Breakout.height);
-		g.setColor(Color.BLACK);
-		//g.setFont(titleFont);
-		g.drawString("YOU WIN", 60, 200);
-		//g.drawString("" + manager.getScore(), 60, 400);
+		g.setColor(Color.YELLOW);
+		g.setFont(titleFont);
+		g.drawString("YOU WIN", 200, 200);
 	}
 	
 	@Override
@@ -161,7 +170,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener, Mo
 			if(currentState == END_STATE) {
 				currentState = MENU_STATE;
 			}*/
-			if(currentState == MENU_STATE || currentState == GAME_TITLE1 || currentState == GAME_TITLE2 || currentState == GAME_TITLE3) {
+			if(currentState == MENU_STATE || currentState == GAME_TITLE1 || currentState == GAME_TITLE2 || currentState == GAME_TITLE3 || currentState == GAME_OVER) {
 				currentState++;
 				manager = new ObjectManager(paddle,level);
 			}
@@ -188,6 +197,38 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener, Mo
 	public void mouseMoved(MouseEvent e) {
 		// TODO Auto-generated method stub
 		paddle.x = e.getX();
+	}
+
+	@Override
+	public void mouseClicked(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mousePressed(MouseEvent e) {
+		// TODO Auto-generated method stub
+		if(gameStarted == false) {
+			gameStarted = true;
+		}
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseExited(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
 	}
 
 	

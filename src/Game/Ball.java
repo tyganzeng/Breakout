@@ -17,7 +17,7 @@ public class Ball extends GameObject{
 		width = 20;
 		height = 20;
 		color = Color.GREEN;
-		speed = 5;
+		speed = 7;
 		angle = 50;
 		canBounce = true;
 		isAlive = true;
@@ -27,6 +27,11 @@ public class Ball extends GameObject{
 	public Ball(int x, int y, double angle) {
 		this(x,y);
 		this.angle = angle;
+	}
+	public Ball(int x, int y, double angle, double speed, boolean canBounce) {
+		this(x,y, angle);
+		this.speed = speed;
+		this.canBounce = canBounce;
 	}
 	
 	public void update() {
@@ -75,6 +80,7 @@ public class Ball extends GameObject{
 	}
 	public void cornerBounce() {
 		angle = angle + 180;
+		System.out.println("corner");
 	}
 	public void paddleBounce(int padX, int padY) {
 		try {
