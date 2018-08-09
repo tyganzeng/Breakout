@@ -39,7 +39,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener, Mo
 		titleFont = new Font("Arial", Font.PLAIN, 48);
 		normalFont = new Font("Lucida Sans", Font.PLAIN, 20);
 		manager = new ObjectManager(paddle,level);
-		timer = new Timer(1000 / 60, this);
+		timer = new Timer(1000 / 120, this);
 	}
 	
 	public void startGame() {
@@ -112,8 +112,9 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener, Mo
 		g.setFont(titleFont);
 		g.drawString("BREAKOUT", 200, 200);
 		g.setFont(normalFont);
-		g.drawString("Press ENTER to start", 130, 350);
-		g.drawString("Mouse-controlled", 100,500);
+		g.drawString("Click anywhere to start", 210, 350);
+		g.drawString("Press r to restart", 220, 650);
+		g.drawString("Paddle is controlled by mouse", 190,500);
 		
 	}
 	public void drawTitleState(Graphics g) {
@@ -123,7 +124,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener, Mo
 		g.setFont(titleFont);
 		g.drawString("LEVEL: " + level, 200, 200);
 		g.setFont(normalFont);
-		g.drawString("press enter to start", 200,400);
+		g.drawString("Click anywhere to start", 190,400);
 	}
 	
 	public void drawGameState(Graphics g) {
@@ -170,14 +171,13 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener, Mo
 			if(currentState == END_STATE) {
 				currentState = MENU_STATE;
 			}*/
-			if(currentState == MENU_STATE || currentState == GAME_TITLE1 || currentState == GAME_TITLE2 || currentState == GAME_TITLE3 || currentState == GAME_OVER) {
-				currentState++;
-				manager = new ObjectManager(paddle,level);
-			}
-		}
+			
+		} 
 		else if (e.getKeyCode() == KeyEvent.VK_0) {
 			currentState++;
 			level++;
+		} else if (e.getKeyCode() == KeyEvent.VK_R) {
+			currentState = MENU_STATE;
 		}
 	}
 
@@ -202,7 +202,17 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener, Mo
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		// TODO Auto-generated method stub
-		
+		if(currentState == MENU_STATE || currentState == GAME_TITLE1 || currentState == GAME_TITLE2 || currentState == GAME_TITLE3) {
+			currentState++;
+			manager = new ObjectManager(paddle,level);
+			paddle.width = 100;
+		} else if (currentState == GAME_OVER) {
+			currentState = MENU_STATE;
+		}
+		else {
+			manager.fire();
+			System.out.println("click");
+		}
 	}
 
 	@Override
@@ -211,6 +221,7 @@ public class GamePanel extends JPanel implements ActionListener, KeyListener, Mo
 		if(gameStarted == false) {
 			gameStarted = true;
 		}
+		System.out.println("pressed");
 	}
 
 	@Override

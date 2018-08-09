@@ -18,7 +18,7 @@ public class Powerup extends GameObject{
 		type = "NONE";
 		text = "N";
 		color = Color.BLACK;
-		speed = 3;
+		speed = 2;
 		collisionBox = new Rectangle(x,y,width,height);
 		// TODO Auto-generated constructor stub
 	}
@@ -53,7 +53,7 @@ public class Powerup extends GameObject{
 			color = Color.RED;
 			text = "F";
 		} else if (type == "SLOW") {
-			color = Color.GREEN;
+			color = Color.BLUE;
 			text = "S";
 		} else if (type == "GROW") {
 			color = Color.ORANGE;
@@ -61,15 +61,18 @@ public class Powerup extends GameObject{
 		} else if (type == "MINI") {
 			color = Color.PINK;
 			text = "M";
-		} else if (type == "BOUNCE") {
+		} else if (type == "PIERCE") {
 			color = Color.DARK_GRAY;
-			text = "B";
+			text = "P";
 		} else if (type == "DIVIDE") {
 			color = Color.BLACK;
 			text = "D";
 		} else if (type == "EIGHT") {
 			color = Color.CYAN;
 			text = "8";
+		} else if (type == "BLASTER") {
+			color = Color.GREEN;
+			text = "B";
 		}
 		else {
 			color = Color.BLACK;

@@ -17,7 +17,7 @@ public class Ball extends GameObject{
 		width = 20;
 		height = 20;
 		color = Color.GREEN;
-		speed = 7;
+		speed = 3;
 		angle = 50;
 		canBounce = true;
 		isAlive = true;
@@ -40,7 +40,7 @@ public class Ball extends GameObject{
 		y -= speed * Math.cos(Math.toRadians(angle));
 		hitY = y + height/2;
 		hitX = x + width/2;
-		if(x > Breakout.width || x < 0) {
+		if(x > Breakout.width -20 || x < 0) {
 			horizBounce();
 		}
 		if(y < 0) {

@@ -7,6 +7,7 @@ import java.awt.Point;
 import java.awt.PointerInfo;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class ObjectManager {
 	
@@ -15,9 +16,11 @@ public class ObjectManager {
 	Ball ball;
 	List<Ball> balls;
 	List<Brick> bricks;
+	List<Bullet> bullets;
 	List<Powerup> powerups;
 	List<PowerupText> powerupTexts;
 	int timer;
+	int level;
 	
 	public ObjectManager(Paddle p, int level) {
 		lives = 3;
@@ -27,9 +30,10 @@ public class ObjectManager {
 		ball = new Ball((int) paddle.x, (int) paddle.y);
 		bricks = new ArrayList<Brick>();
 		powerups = new ArrayList<Powerup>();
+		bullets = new ArrayList<Bullet>();
 		addBall(ball);
 		System.out.println("ball added");
-		
+		this.level = level;
 		
 		if (level == 1) {
 			for (int i = 0; i < 7; i++) {
@@ -78,7 +82,7 @@ public class ObjectManager {
 			//addBrick(new Brick(400, 200, Color., "EIGHT"));
 			 addBrick(new Brick(50,200,Color.YELLOW, "GROW"));
 			 addBrick(new Brick(150,200,Color.YELLOW, "MINI"));
-			 addBrick(new Brick(450,200,Color.YELLOW, "BOUNCE"));
+			 addBrick(new Brick(450,200,Color.YELLOW, "PIERCE"));
 			 addBrick(new Brick(550,200,Color.YELLOW, "DIVIDE"));
 			 addBrick(new Brick(50,240,Color.YELLOW, "FAST"));
 			 addBrick(new Brick(150,240,Color.YELLOW, "FAST"));
@@ -136,24 +140,43 @@ public class ObjectManager {
 				addBrick(new Brick(i*50 + 200, 300, Color.DARK_GRAY, "NONE"));
 			}
 			addBrick(new Brick(50, 240, Color.YELLOW, "EIGHT"));
-			addBrick(new Brick(150, 240, Color.YELLOW, "EIGHT"));
-			addBrick(new Brick(250, 240, Color.YELLOW, "EIGHT"));
-			addBrick(new Brick(350, 240, Color.YELLOW, "EIGHT"));
-			addBrick(new Brick(450, 240, Color.YELLOW, "EIGHT"));
+			addBrick(new Brick(150, 240, Color.YELLOW, "FAST"));
+			addBrick(new Brick(250, 240, Color.YELLOW, "DIVIDE"));
+			addBrick(new Brick(350, 240, Color.YELLOW, "BLASTER"));
+			addBrick(new Brick(450, 240, Color.YELLOW, "SLOW"));
 			addBrick(new Brick(550, 240, Color.YELLOW, "EIGHT"));
 
 			
 			
 		} else if (level == 3) {
 			for (int i = 0; i < 5; i++) {
-				for (int j = 0; j < 7; j++) {
-					addBrick(new Brick(j * 50 + 100, i * 60 + 100, Color.YELLOW, "NONE"));
+				for (int j = 0; j < 6; j++) {
+					String randType = "NONE";
+					Random r = new Random();
+					int rand = r.nextInt(8);
+					if(rand == 0) {
+						randType = "FAST";
+					} else if (rand == 1) {
+						randType = "SLOW";
+					} else if (rand == 2) {
+						randType = "GROW";
+					} else if (rand == 3) {
+						randType = "MINI";
+					} else if (rand == 4) {
+						randType = "PIERCE";
+					} else if (rand == 5) {
+						randType = "DIVIDE";
+					} else if (rand == 6) {
+						randType = "EIGHT";
+					} else if (rand == 7) {
+						randType = "BLASTER";
+					}
+					addBrick(new Brick(j * 100 + 50, i * 60 + 100, Color.YELLOW, randType));
 				}
 			}
 			
 			
 			// addBrick(new Brick(200,200,Color.BLUE, "EIGHT"));
-			addBrick(new Brick(400, 200, Color.BLUE, "EIGHT"));
 			// addBrick(new Brick(400,200,Color.BLUE, "GROW"));
 			// addBrick(new Brick(500,200,Color.BLUE, "MINI"));
 			// addBrick(new Brick(600,200,Color.BLUE, "BOUNCE"));
@@ -181,12 +204,21 @@ public class ObjectManager {
 		for(PowerupText t : powerupTexts) {
 			t.update();
 		}
-		System.out.println(balls.get(0).x);
+		for(Bullet b : bullets) {
+			b.update();
+		}
+		//System.out.println(balls.get(0).x);
 		timer++;
-		
+		if(timer < 20) {
+		System.out.println(timer);
+		}
 	}
 	
 	public void draw(Graphics g) {
+		if(level == 2 || level == 3) {
+			g.setColor(Color.BLACK);
+		}
+		g.fillRect(0, 0, Breakout.width, Breakout.height);
 		paddle.draw(g);
 		g.drawString("LIVES: " + lives, 500, 100);
 		for(Ball b : balls) {
@@ -201,13 +233,15 @@ public class ObjectManager {
 		for(PowerupText t : powerupTexts) {
 			t.draw(g);
 		}
+		for(Bullet b : bullets) {
+			b.draw(g);
+		}
 	}
 	
 	public void checkCollision() {
 		try {
 			for(Ball b : balls) {
 				if(b.collisionBox.intersects(paddle.collisionBox) && timer > 0) {
-					timer = 0;
 					b.paddleBounce((int) paddle.x + paddle.width/2, (int) paddle.y + 20);
 				}
 			}
@@ -219,21 +253,28 @@ public class ObjectManager {
 			for (Brick b : bricks) {
 				for (Ball ba : balls) {
 					if (ba.collisionBox.intersects(b.collisionBox)) {
-						if (ba.canBounce == true) {
+						if (ba.canBounce && timer > 5 ) {
 							if (ba.hitX > b.x && ba.hitX < (b.x + b.width)) {
 								ba.vertBounce();
+								dropPowerup(b);
+								bricks.remove(b);
 							} else if (ba.hitY > b.y && ba.hitY < (b.y + b.height)) {
 								ba.horizBounce();
-								
+								dropPowerup(b);
+								bricks.remove(b);
 							} else {
+								//ba.horizBounce();
+								
 								ba.cornerBounce();
-							
+								dropPowerup(b);
+								bricks.remove(b);
 							}
+							timer = 0;
+						} else {
+							dropPowerup(b);
+							bricks.remove(b);
+				
 						}
-						dropPowerup(b);
-						bricks.remove(b);
-
-						
 					}
 				}
 			}
@@ -254,6 +295,21 @@ public class ObjectManager {
 			catch(Exception e) {
 				
 			}
+		
+		try {
+			for(Brick b : bricks) {
+				for(Bullet bu : bullets) {
+					if(bu.collisionBox.intersects(b.collisionBox)) {
+						bricks.remove(b);
+						dropPowerup(b);
+						bullets.remove(bu);
+					}
+				}
+			}
+		}
+		catch (Exception e) {
+			
+		}
 	}
 	
 	public void dropPowerup(Brick b) {
@@ -271,28 +327,28 @@ public class ObjectManager {
 		int size = balls.size();
 		for (int i = 0; i < size; i++) {
 			if (p.type == "FAST") {
-				balls.get(i).speed *= 2;
+				balls.get(i).speed *= 1.2;
 			} else if (p.type == "SLOW") {
-				balls.get(i).speed /= 2;
+				balls.get(i).speed *= 0.8;
 			} else if (p.type == "GROW") {
 				paddle.width = 200;
 			} else if (p.type == "MINI") {
 				paddle.width = 50;
-			} else if (p.type == "BOUNCE") {
+			} else if (p.type == "PIERCE") {
 				balls.get(i).canBounce = false;
 			} else if (p.type == "DIVIDE") {
 				addBall(new Ball((int) balls.get(i).x, (int) balls.get(i).y, balls.get(i).angle + 5.0, balls.get(0).speed, balls.get(0).canBounce));
 				addBall(new Ball ((int) balls.get(i).x,(int) balls.get(i).y, balls.get(i).angle - 5.0, balls.get(0).speed, balls.get(0).canBounce));
 			} else if (p.type == "EIGHT") {
-				addBall(new Ball((int) balls.get(i).x, (int) balls.get(i).y, 0.0));
-				addBall(new Ball((int) balls.get(i).x, (int) balls.get(i).y, 45.0));
-				addBall(new Ball((int) balls.get(i).x, (int) balls.get(i).y, 90.0));
-				addBall(new Ball((int) balls.get(i).x, (int) balls.get(i).y, 135.0));
-				addBall(new Ball((int) balls.get(i).x, (int) balls.get(i).y, 180.0));
-				addBall(new Ball((int) balls.get(i).x, (int) balls.get(i).y, 225.0));
-				addBall(new Ball((int) balls.get(i).x, (int) balls.get(i).y, 270.0));
-				addBall(new Ball((int) balls.get(i).x, (int) balls.get(i).y, 315.0));
-				
+				for(int j = 0; j < 8; j++) {
+					if(balls.get(0).canBounce) {
+						addBall(new Ball((int) balls.get(i).x, (int) balls.get(i).y, j* 45.0));
+					} else {
+						addBall(new Ball((int) balls.get(i).x, (int) balls.get(i).y, j* 45.0, balls.get(i).speed, true));
+					}
+				}
+			} else if (p.type == "BLASTER") {
+				paddle.blasterMode = true;
 			}
 			else {
 				System.out.println("nothing happened");
@@ -332,6 +388,7 @@ public class ObjectManager {
 				return true;
 			} else {
 				lives--;
+				paddle.width = 100;
 				addBall(new Ball((int) paddle.x, (int) paddle.y));
 			}
 		}
@@ -343,5 +400,10 @@ public class ObjectManager {
 			return true;
 		}
 		return false;
+	}
+	
+	public void fire() {
+		paddle.fire(bullets);
+		System.out.println("Manager: fired");
 	}
 }

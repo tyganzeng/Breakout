@@ -19,6 +19,7 @@ public class Breakout {
 		window.add(panel);
 		window.addKeyListener(panel);
 		window.addMouseMotionListener(panel);
+		window.addMouseListener(panel);
 		window.setVisible(true);
 		window.getContentPane().setPreferredSize(new Dimension(width, height));
         window.pack();
